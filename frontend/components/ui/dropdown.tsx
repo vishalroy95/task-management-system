@@ -55,7 +55,6 @@ export function Dropdown({
     align,
     gap: 6,
     isOpen,
-    minHeight: 80,
     panelRef,
     triggerRef,
   });
@@ -108,11 +107,12 @@ export function Dropdown({
         ? createPortal(
             <div
               className={cn(
-                "w-72 overflow-y-auto rounded-lg border border-border bg-surface p-2 shadow-soft scrollbar-thin",
+                "w-72 max-h-60 overflow-y-auto rounded-lg border border-border bg-surface p-2 shadow-soft",
+                "scrollbar-thin",
                 panelClassName,
               )}
               ref={panelRef}
-              style={{ ...floatingStyle, zIndex: 9999 }}
+              style={floatingStyle}
             >
               {children}
             </div>,

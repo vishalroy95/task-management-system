@@ -233,7 +233,7 @@ select {
   border: 1px solid var(--border) !important;
 }
 
-/* Custom scrollbar styling for dropdowns and scrollable content */
+/* Subtle scrollbar styling */
 .scrollbar-thin::-webkit-scrollbar {
   width: 6px;
 }

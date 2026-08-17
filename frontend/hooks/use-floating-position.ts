@@ -10,7 +10,6 @@ export type UseFloatingPositionOptions = {
   align?: Alignment;
   gap?: number;
   isOpen: boolean;
-  minHeight?: number;
   padding?: number;
   placement?: Placement;
   panelRef: RefObject<HTMLElement | null>;
@@ -21,7 +20,6 @@ export function useFloatingPosition({
   align = "right",
   gap = 6,
   isOpen,
-  minHeight = 120,
   padding = 8,
   placement = "auto",
   panelRef,
@@ -32,7 +30,7 @@ export function useFloatingPosition({
     position: "fixed",
     top: 0,
     visibility: "hidden",
-    zIndex: 9999,
+    zIndex: 50,
   });
 
   useEffect(() => {
@@ -62,37 +60,19 @@ export function useFloatingPosition({
       } else if (placement === "bottom") {
         openUpward = false;
       } else {
-        // Auto: prefer opening downward, but switch to upward if insufficient space
-        const minRequiredSpace = Math.min(panelHeight, 220);
-        openUpward = spaceBelow < minRequiredSpace && spaceAbove > spaceBelow;
+        openUpward = spaceBelow < 240 && spaceAbove > spaceBelow;
       }
 
       let top: number;
-      let maxHeight: number;
 
       if (openUpward) {
-        // Opening upward: position above trigger
         top = triggerRect.top - panelHeight - gap;
-        maxHeight = spaceAbove;
-        
-        // Ensure top doesn't go above viewport
         if (top < padding) {
           top = padding;
-          maxHeight = triggerRect.top - gap - padding;
         }
       } else {
-        // Opening downward: position below trigger
         top = triggerRect.bottom + gap;
-        maxHeight = spaceBelow;
-        
-        // Ensure dropdown doesn't go below viewport
-        if (top + panelHeight > viewportHeight - padding) {
-          maxHeight = viewportHeight - triggerRect.bottom - gap - padding;
-        }
       }
-
-      // Ensure we always have at least minHeight
-      maxHeight = Math.max(minHeight, maxHeight);
 
       let left: number;
       if (align === "left") {
@@ -101,7 +81,6 @@ export function useFloatingPosition({
         left = triggerRect.right - panelWidth;
       }
 
-      // Clamp horizontally to remain within the viewport
       if (left + panelWidth > viewportWidth - padding) {
         left = Math.max(padding, viewportWidth - panelWidth - padding);
       }
@@ -111,11 +90,10 @@ export function useFloatingPosition({
 
       setStyle({
         left: `${Math.round(left)}px`,
-        maxHeight: `${Math.round(maxHeight)}px`,
         position: "fixed",
         top: `${Math.round(top)}px`,
         visibility: "visible",
-        zIndex: 9999,
+        zIndex: 50,
       });
     }
 
@@ -140,7 +118,7 @@ export function useFloatingPosition({
       window.removeEventListener("scroll", updatePosition, true);
       resizeObserver?.disconnect();
     };
-  }, [align, gap, isOpen, minHeight, padding, placement, panelRef, triggerRef]);
+  }, [align, gap, isOpen, padding, placement, panelRef, triggerRef]);
 
   return { style };
 }
