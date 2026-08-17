@@ -2,7 +2,6 @@
 
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { createPortal } from "react-dom";
 
 import { useFloatingPosition } from "@/hooks/use-floating-position";
 import { cn } from "@/lib/cn";
@@ -104,20 +103,16 @@ export function Dropdown({
         {label}
       </button>
       {isOpen && mounted
-        ? createPortal(
-            <div
-              className={cn(
-                "w-72 max-h-48 overflow-y-auto rounded-lg border border-border bg-surface p-2 shadow-soft",
-                "scrollbar-thin",
-                panelClassName,
-              )}
-              ref={panelRef}
-              style={floatingStyle}
-            >
-              {children}
-            </div>,
-            document.body,
-          )
+        ? <div
+            className={cn(
+              "absolute w-72 max-h-48 overflow-y-auto rounded-lg border border-border bg-surface p-2 shadow-soft z-50 scrollbar-thin",
+              panelClassName,
+            )}
+            ref={panelRef}
+            style={floatingStyle}
+          >
+            {children}
+          </div>
         : null}
     </div>
   );

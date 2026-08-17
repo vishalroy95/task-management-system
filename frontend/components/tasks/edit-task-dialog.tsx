@@ -167,10 +167,10 @@ export function EditTaskDialog({
       role="dialog"
     >
       <div
-        className="w-full max-w-2xl rounded-2xl border border-border bg-surface shadow-soft"
+        className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl border border-border bg-surface shadow-soft"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between border-b border-border px-5 py-4 shrink-0">
           <div>
             <p className="text-caption font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               Update task
@@ -195,7 +195,7 @@ export function EditTaskDialog({
           </button>
         </div>
 
-        <form className="space-y-5 p-5" noValidate onSubmit={handleSubmit}>
+        <form className="space-y-5 p-5 overflow-y-auto flex-1" noValidate onSubmit={handleSubmit}>
           <div className="grid gap-5 md:grid-cols-2">
             <label className="space-y-2 md:col-span-2">
               <span className="text-sm font-medium text-foreground">Task title</span>
@@ -290,7 +290,7 @@ export function EditTaskDialog({
             </div>
           </div>
 
-          <div className="flex flex-col-reverse gap-3 border-t border-border pt-4 sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-3 border-t border-border pt-4 sm:flex-row sm:justify-end shrink-0">
             <Button onClick={onClose} type="button" variant="secondary">
               Cancel
             </Button>

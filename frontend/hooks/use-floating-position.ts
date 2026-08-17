@@ -27,10 +27,9 @@ export function useFloatingPosition({
 }: UseFloatingPositionOptions) {
   const [style, setStyle] = useState<CSSProperties>({
     left: 0,
-    position: "fixed",
+    position: "absolute",
     top: 0,
     visibility: "hidden",
-    zIndex: 50,
   });
 
   useEffect(() => {
@@ -44,7 +43,6 @@ export function useFloatingPosition({
       }
 
       const triggerRect = triggerRef.current.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
       const panel = panelRef.current;
@@ -66,34 +64,23 @@ export function useFloatingPosition({
       let top: number;
 
       if (openUpward) {
-        top = triggerRect.top - panelHeight - gap;
-        if (top < padding) {
-          top = padding;
-        }
+        top = -panelHeight - gap;
       } else {
-        top = triggerRect.bottom + gap;
+        top = triggerRect.height + gap;
       }
 
       let left: number;
       if (align === "left") {
-        left = triggerRect.left;
+        left = 0;
       } else {
-        left = triggerRect.right - panelWidth;
-      }
-
-      if (left + panelWidth > viewportWidth - padding) {
-        left = Math.max(padding, viewportWidth - panelWidth - padding);
-      }
-      if (left < padding) {
-        left = padding;
+        left = triggerRect.width - panelWidth;
       }
 
       setStyle({
         left: `${Math.round(left)}px`,
-        position: "fixed",
+        position: "absolute",
         top: `${Math.round(top)}px`,
         visibility: "visible",
-        zIndex: 50,
       });
     }
 
