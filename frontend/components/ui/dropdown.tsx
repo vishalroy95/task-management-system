@@ -111,7 +111,7 @@ export function Dropdown({
                 panelClassName,
               )}
               ref={panelRef}
-              style={floatingStyle}
+              style={{ ...floatingStyle, zIndex: 9999 }}
             >
               {children}
             </div>,

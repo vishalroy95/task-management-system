@@ -32,7 +32,7 @@ export function useFloatingPosition({
     position: "fixed",
     top: 0,
     visibility: "hidden",
-    zIndex: 50,
+    zIndex: 9999,
   });
 
   useEffect(() => {
@@ -101,7 +101,7 @@ export function useFloatingPosition({
         position: "fixed",
         top: `${Math.round(top)}px`,
         visibility: "visible",
-        zIndex: 50,
+        zIndex: 9999,
       });
     }
 
