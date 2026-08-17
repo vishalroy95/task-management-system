@@ -56,6 +56,7 @@ export function Dropdown({
     isOpen,
     panelRef,
     triggerRef,
+    zIndex: 50,
   });
 
   useEffect(() => {
@@ -105,7 +106,7 @@ export function Dropdown({
       {isOpen && mounted
         ? <div
             className={cn(
-              "absolute w-72 max-h-48 overflow-y-auto rounded-lg border border-border bg-surface p-2 shadow-soft z-50 scrollbar-thin",
+              "absolute w-72 max-h-48 overflow-y-auto rounded-lg border border-border bg-surface p-2 shadow-soft scrollbar-thin",
               panelClassName,
             )}
             ref={panelRef}

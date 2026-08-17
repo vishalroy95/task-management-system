@@ -174,7 +174,7 @@ export function DatePicker(props: DatePickerProps) {
             <div
               className="w-72 max-h-80 overflow-y-auto rounded-lg border border-border bg-surface p-3 shadow-soft scrollbar-thin"
               ref={panelRef}
-              style={floatingStyle}
+              style={{ ...floatingStyle, zIndex: 100 }}
             >
               <div className="flex items-center justify-between gap-2">
                 <Button

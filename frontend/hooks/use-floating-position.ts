@@ -15,6 +15,7 @@ export type UseFloatingPositionOptions = {
   panelRef: RefObject<HTMLElement | null>;
   triggerRef: RefObject<HTMLElement | null>;
   useFixedPosition?: boolean;
+  zIndex?: number;
 };
 
 export function useFloatingPosition({
@@ -26,12 +27,14 @@ export function useFloatingPosition({
   panelRef,
   triggerRef,
   useFixedPosition = false,
+  zIndex = 50,
 }: UseFloatingPositionOptions) {
   const [style, setStyle] = useState<CSSProperties>({
     left: 0,
     position: useFixedPosition ? "fixed" : "absolute",
     top: 0,
     visibility: "hidden",
+    zIndex,
   });
 
   useEffect(() => {
@@ -96,6 +99,7 @@ export function useFloatingPosition({
           position: "fixed",
           top: `${Math.round(top)}px`,
           visibility: "visible",
+          zIndex,
         });
       } else {
         // Absolute positioning for non-portaled elements
@@ -131,6 +135,7 @@ export function useFloatingPosition({
           position: "absolute",
           top: `${Math.round(top)}px`,
           visibility: "visible",
+          zIndex,
         });
       }
     }
@@ -156,7 +161,7 @@ export function useFloatingPosition({
       window.removeEventListener("scroll", updatePosition, true);
       resizeObserver?.disconnect();
     };
-  }, [align, gap, isOpen, padding, placement, panelRef, triggerRef, useFixedPosition]);
+  }, [align, gap, isOpen, padding, placement, panelRef, triggerRef, useFixedPosition, zIndex]);
 
   return { style };
 }
