@@ -14,6 +14,7 @@ export type UseFloatingPositionOptions = {
   placement?: Placement;
   panelRef: RefObject<HTMLElement | null>;
   triggerRef: RefObject<HTMLElement | null>;
+  useFixedPosition?: boolean;
 };
 
 export function useFloatingPosition({
@@ -24,10 +25,11 @@ export function useFloatingPosition({
   placement = "auto",
   panelRef,
   triggerRef,
+  useFixedPosition = false,
 }: UseFloatingPositionOptions) {
   const [style, setStyle] = useState<CSSProperties>({
     left: 0,
-    position: "absolute",
+    position: useFixedPosition ? "fixed" : "absolute",
     top: 0,
     visibility: "hidden",
   });
@@ -43,45 +45,94 @@ export function useFloatingPosition({
       }
 
       const triggerRect = triggerRef.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
       const panel = panelRef.current;
       const panelWidth = panel ? panel.offsetWidth : 288;
       const panelHeight = panel ? panel.offsetHeight : 240;
 
-      const spaceBelow = viewportHeight - triggerRect.bottom - gap - padding;
-      const spaceAbove = triggerRect.top - gap - padding;
+      if (useFixedPosition) {
+        // Fixed positioning for portaled elements
+        const spaceBelow = viewportHeight - triggerRect.bottom - gap - padding;
+        const spaceAbove = triggerRect.top - gap - padding;
 
-      let openUpward = false;
-      if (placement === "top") {
-        openUpward = true;
-      } else if (placement === "bottom") {
-        openUpward = false;
+        let openUpward = false;
+        if (placement === "top") {
+          openUpward = true;
+        } else if (placement === "bottom") {
+          openUpward = false;
+        } else {
+          openUpward = spaceBelow < 240 && spaceAbove > spaceBelow;
+        }
+
+        let top: number;
+
+        if (openUpward) {
+          top = triggerRect.top - panelHeight - gap;
+          if (top < padding) {
+            top = padding;
+          }
+        } else {
+          top = triggerRect.bottom + gap;
+        }
+
+        let left: number;
+        if (align === "left") {
+          left = triggerRect.left;
+        } else {
+          left = triggerRect.right - panelWidth;
+        }
+
+        if (left + panelWidth > viewportWidth - padding) {
+          left = Math.max(padding, viewportWidth - panelWidth - padding);
+        }
+        if (left < padding) {
+          left = padding;
+        }
+
+        setStyle({
+          left: `${Math.round(left)}px`,
+          position: "fixed",
+          top: `${Math.round(top)}px`,
+          visibility: "visible",
+        });
       } else {
-        openUpward = spaceBelow < 240 && spaceAbove > spaceBelow;
+        // Absolute positioning for non-portaled elements
+        const spaceBelow = viewportHeight - triggerRect.bottom - gap - padding;
+        const spaceAbove = triggerRect.top - gap - padding;
+
+        let openUpward = false;
+        if (placement === "top") {
+          openUpward = true;
+        } else if (placement === "bottom") {
+          openUpward = false;
+        } else {
+          openUpward = spaceBelow < 240 && spaceAbove > spaceBelow;
+        }
+
+        let top: number;
+
+        if (openUpward) {
+          top = -panelHeight - gap;
+        } else {
+          top = triggerRect.height + gap;
+        }
+
+        let left: number;
+        if (align === "left") {
+          left = 0;
+        } else {
+          left = triggerRect.width - panelWidth;
+        }
+
+        setStyle({
+          left: `${Math.round(left)}px`,
+          position: "absolute",
+          top: `${Math.round(top)}px`,
+          visibility: "visible",
+        });
       }
-
-      let top: number;
-
-      if (openUpward) {
-        top = -panelHeight - gap;
-      } else {
-        top = triggerRect.height + gap;
-      }
-
-      let left: number;
-      if (align === "left") {
-        left = 0;
-      } else {
-        left = triggerRect.width - panelWidth;
-      }
-
-      setStyle({
-        left: `${Math.round(left)}px`,
-        position: "absolute",
-        top: `${Math.round(top)}px`,
-        visibility: "visible",
-      });
     }
 
     updatePosition();
@@ -105,7 +156,7 @@ export function useFloatingPosition({
       window.removeEventListener("scroll", updatePosition, true);
       resizeObserver?.disconnect();
     };
-  }, [align, gap, isOpen, padding, placement, panelRef, triggerRef]);
+  }, [align, gap, isOpen, padding, placement, panelRef, triggerRef, useFixedPosition]);
 
   return { style };
 }
