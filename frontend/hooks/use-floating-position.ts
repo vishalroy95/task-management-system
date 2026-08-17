@@ -62,23 +62,37 @@ export function useFloatingPosition({
       } else if (placement === "bottom") {
         openUpward = false;
       } else {
-        // Auto: if space below is less than required panel height (or threshold 220px) AND space above is greater
-        openUpward = spaceBelow < Math.min(panelHeight, 220) && spaceAbove > spaceBelow;
+        // Auto: prefer opening downward, but switch to upward if insufficient space
+        const minRequiredSpace = Math.min(panelHeight, 220);
+        openUpward = spaceBelow < minRequiredSpace && spaceAbove > spaceBelow;
       }
 
       let top: number;
       let maxHeight: number;
 
       if (openUpward) {
+        // Opening upward: position above trigger
         top = triggerRect.top - panelHeight - gap;
-        maxHeight = Math.max(minHeight, spaceAbove);
+        maxHeight = spaceAbove;
+        
+        // Ensure top doesn't go above viewport
         if (top < padding) {
           top = padding;
+          maxHeight = triggerRect.top - gap - padding;
         }
       } else {
+        // Opening downward: position below trigger
         top = triggerRect.bottom + gap;
-        maxHeight = Math.max(minHeight, spaceBelow);
+        maxHeight = spaceBelow;
+        
+        // Ensure dropdown doesn't go below viewport
+        if (top + panelHeight > viewportHeight - padding) {
+          maxHeight = viewportHeight - triggerRect.bottom - gap - padding;
+        }
       }
+
+      // Ensure we always have at least minHeight
+      maxHeight = Math.max(minHeight, maxHeight);
 
       let left: number;
       if (align === "left") {
