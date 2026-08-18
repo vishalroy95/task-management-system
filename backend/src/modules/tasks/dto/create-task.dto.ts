@@ -4,7 +4,6 @@ import {
   IsEnum,
   IsOptional,
   IsString,
-  IsUUID,
   Length,
 } from "class-validator";
 
@@ -21,23 +20,23 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsArray()
-  @IsUUID("4", { each: true })
+  @IsString({ each: true })
   labelIds?: string[];
 
   @IsOptional()
   @IsArray()
-  @IsUUID("4", { each: true })
+  @IsString({ each: true })
   memberIds?: string[];
 
   @IsEnum(TaskPriority)
   @IsOptional()
   priority?: TaskPriority;
 
-  @IsUUID()
+  @IsString()
   projectId!: string;
 
   @IsOptional()
-  @IsUUID()
+  @IsString()
   reporterId?: string;
 
   @IsEnum(TaskStatus)

@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsDateString, IsEnum, IsOptional, IsString } from "class-validator";
 
 import { PaginationQueryDto } from "../../../common/dto/pagination-query.dto";
 import { TaskPriority, TaskStatus } from "../../../common/types/enums";
@@ -9,11 +9,11 @@ export class TaskQueryDto extends PaginationQueryDto {
   dueDate?: string;
 
   @IsOptional()
-  @IsUUID()
+  @IsString()
   labelId?: string;
 
   @IsOptional()
-  @IsUUID()
+  @IsString()
   memberId?: string;
 
   @IsOptional()
@@ -21,7 +21,7 @@ export class TaskQueryDto extends PaginationQueryDto {
   priority?: TaskPriority;
 
   @IsOptional()
-  @IsUUID()
+  @IsString()
   projectId?: string;
 
   @IsOptional()

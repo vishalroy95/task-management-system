@@ -272,7 +272,7 @@ export function TasksControls({
           </div>
         </Dropdown>
 
-          <Button disabled={isMutating} onClick={() => setIsAddTaskOpen(true)} size="sm">
+          <Button disabled={isMutating} onClick={() => setIsAddTaskOpen(true)} size="sm" type="button">
             <PlusIcon />
             {isMutating ? "Saving" : "Add Task"}
           </Button>

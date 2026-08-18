@@ -84,8 +84,8 @@ export class TasksService {
       this.tasksRepository
         .find(filter)
         .sort({ createdAt: -1 })
-        .skip(query.offset)
-        .limit(query.limit)
+        .skip(query.offset ?? 0)
+        .limit(query.limit ?? 20)
         .exec(),
       this.tasksRepository.countDocuments(filter).exec(),
     ]);

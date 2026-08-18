@@ -80,19 +80,7 @@ export function EditTaskDialog({
   }, [isOpen, onClose]);
 
   const projectOptions: Project[] = useMemo(
-    () =>
-      projects.length > 0
-        ? projects
-        : [{
-            description: "",
-            dueDate: "",
-            id: "default",
-            lead: { id: "u1", initials: "NA", name: "Unassigned" },
-            name: "General",
-            priority: "medium" as const,
-            status: "active" as const,
-            tasks: [],
-          }],
+    () => projects,
     [projects],
   );
 
@@ -196,7 +184,7 @@ export function EditTaskDialog({
         </div>
 
         <form className="space-y-5 p-5 overflow-y-auto flex-1" noValidate onSubmit={handleSubmit}>
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5 grid-cols-1 md:grid-cols-2">
             <label className="space-y-2 md:col-span-2">
               <span className="text-sm font-medium text-foreground">Task title</span>
               <Input
@@ -239,7 +227,7 @@ export function EditTaskDialog({
                   updateField("status", nextStatus);
                 }}
                 selectedStatus={formValues.status}
-                triggerClassName="h-11 w-full justify-start rounded-lg border border-border bg-surface px-3 text-sm shadow-xs hover:bg-surface-muted"
+                triggerClassName="h-11 w-full justify-start rounded-lg border border-border bg-surface px-3 text-sm shadow-xs hover:bg-surface-muted min-w-0"
               />
             </div>
 

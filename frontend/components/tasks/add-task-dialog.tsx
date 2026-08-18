@@ -50,7 +50,7 @@ const initialValues = (projects: Project[]): FormValues => ({
   dueDate: "",
   labels: "",
   priority: "medium",
-  projectId: projects[0]?.id ?? "",
+  projectId: projects.length > 0 ? projects[0].id : "",
   status: "todo",
   title: "",
 });
@@ -79,11 +79,16 @@ export function AddTaskDialog({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (isOpen && projects.length > 0 && !formValues.projectId) {
+      setTimeout(() => {
+        setFormValues((current) => ({ ...current, projectId: projects[0].id }));
+      }, 0);
+    }
+  }, [isOpen, projects, formValues.projectId]);
+
   const projectOptions: Project[] = useMemo(
-    () =>
-      projects.length > 0
-        ? projects
-        : [{ description: "", dueDate: "", id: "default", lead: { id: "u1", initials: "NA", name: "Unassigned" }, name: "General", priority: "medium" as const, status: "active" as const, tasks: [] }],
+    () => projects,
     [projects],
   );
 
@@ -99,8 +104,8 @@ export function AddTaskDialog({
       nextErrors.title = "Task title is required.";
     }
 
-    if (!formValues.projectId) {
-      nextErrors.projectId = "Project is required.";
+    if (!formValues.projectId || projects.length === 0) {
+      nextErrors.projectId = "Please select a valid project.";
     }
 
     return nextErrors;
@@ -113,6 +118,12 @@ export function AddTaskDialog({
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
+      return;
+    }
+
+    // Double-check projectId before submission
+    if (!formValues.projectId || formValues.projectId === "default" || projects.length === 0) {
+      setErrors({ projectId: "Please select a valid project." });
       return;
     }
 
@@ -169,7 +180,7 @@ export function AddTaskDialog({
         </div>
 
         <form className="space-y-5 p-5 overflow-y-auto flex-1" noValidate onSubmit={handleSubmit}>
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5 grid-cols-1 md:grid-cols-2">
             <label className="space-y-2 md:col-span-2">
               <span className="text-sm font-medium text-foreground">Task title</span>
               <Input
@@ -194,12 +205,18 @@ export function AddTaskDialog({
 
             <div className="space-y-2">
               <span className="text-sm font-medium text-foreground">Project</span>
-              <ProjectSelector
-                onChange={(nextProjectId) => updateField("projectId", nextProjectId)}
-                projects={projectOptions}
-                selectedProjectId={formValues.projectId}
-                triggerClassName="h-11 w-full justify-between rounded-lg border border-border bg-surface px-3 text-sm shadow-xs hover:bg-surface-muted"
-              />
+              {projects.length === 0 ? (
+                <div className="h-11 w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-muted-foreground">
+                  No projects available
+                </div>
+              ) : (
+                <ProjectSelector
+                  onChange={(nextProjectId) => updateField("projectId", nextProjectId)}
+                  projects={projectOptions}
+                  selectedProjectId={formValues.projectId}
+                  triggerClassName="h-11 w-full justify-between rounded-lg border border-border bg-surface px-3 text-sm shadow-xs hover:bg-surface-muted min-w-0"
+                />
+              )}
               {errors.projectId ? (
                 <span className="text-sm text-danger">{errors.projectId}</span>
               ) : null}
@@ -208,7 +225,7 @@ export function AddTaskDialog({
             <label className="space-y-2">
               <span className="text-sm font-medium text-foreground">Status</span>
               <select
-                className="h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground shadow-xs focus:border-primary focus:outline-none"
+                className="h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground shadow-xs focus:border-primary focus:outline-none min-w-0"
                 onChange={(event) => updateField("status", event.target.value as TaskStatus)}
                 value={formValues.status}
               >
@@ -222,7 +239,7 @@ export function AddTaskDialog({
             <label className="space-y-2">
               <span className="text-sm font-medium text-foreground">Priority</span>
               <select
-                className="h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground shadow-xs focus:border-primary focus:outline-none"
+                className="h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground shadow-xs focus:border-primary focus:outline-none min-w-0"
                 onChange={(event) => updateField("priority", event.target.value as TaskPriority)}
                 value={formValues.priority}
               >
@@ -237,7 +254,7 @@ export function AddTaskDialog({
             <label className="space-y-2">
               <span className="text-sm font-medium text-foreground">Assignee</span>
               <select
-                className="h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground shadow-xs focus:border-primary focus:outline-none"
+                className="h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground shadow-xs focus:border-primary focus:outline-none min-w-0"
                 onChange={(event) => updateField("assignee", event.target.value)}
                 value={formValues.assignee}
               >

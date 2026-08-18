@@ -1,11 +1,11 @@
-import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsEnum, IsOptional, IsString } from "class-validator";
 
 import { PaginationQueryDto } from "../../../common/dto/pagination-query.dto";
 import { ProjectStatus, TaskPriority } from "../../../common/types/enums";
 
 export class ProjectQueryDto extends PaginationQueryDto {
   @IsOptional()
-  @IsUUID()
+  @IsString()
   leadId?: string;
 
   @IsOptional()
@@ -21,6 +21,6 @@ export class ProjectQueryDto extends PaginationQueryDto {
   status?: ProjectStatus;
 
   @IsOptional()
-  @IsUUID()
+  @IsString()
   workspaceId?: string;
 }
